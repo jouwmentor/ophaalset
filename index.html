@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#24185A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ophaalsets">
+<title>Ophaalset havo 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  html,body{margin:0}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+  :root{
+    --ground:#F4F4FA; --surface:#FFFFFF; --raise:#EFEFF7;
+    --ink:#1A1D3A; --muted:#5B6084; --line:#DCDDE9;
+    --purple:#24185A; --orange:#EC6707; --blue:#054290;
+    --rood:#D7263D; --oranje:#E07B12; --groen:#2E9E5B;
+    --onSoft:#FDF0E4; --blueSoft:#EAEFF8; --focus:#EC6707;
+    --display:'Archivo',Verdana,system-ui,sans-serif;
+    --body:'Source Sans 3',Verdana,system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#121327; --surface:#1C1E3A; --raise:#242745;
+      --ink:#ECEDF6; --muted:#A7ABC9; --line:#32355C;
+      --purple:#C7C2F0; --orange:#FF8F35; --blue:#8FB4F2;
+      --rood:#FF6A78; --oranje:#FFA33D; --groen:#4ECB85;
+      --onSoft:#332412; --blueSoft:#18294A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#121327; --surface:#1C1E3A; --raise:#242745;
+    --ink:#ECEDF6; --muted:#A7ABC9; --line:#32355C;
+    --purple:#C7C2F0; --orange:#FF8F35; --blue:#8FB4F2;
+    --rood:#FF6A78; --oranje:#FFA33D; --groen:#4ECB85;
+    --onSoft:#332412; --blueSoft:#18294A;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ground);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;margin:0}
+  .wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:0 96px}
+  h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+  h1{font-size:1.25rem;font-weight:700}
+  h2{font-size:1.05rem;font-weight:600;color:var(--purple)}
+  h3{font-size:.95rem;font-weight:600}
+  p{margin:0}
+  .lab{font-family:var(--display);font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .sub{color:var(--muted);font-size:.88rem}
+  header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--ground);border-bottom:1px solid var(--line)}
+  .topin{max-width:720px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .brand{display:flex;flex-direction:column;flex:1 1 auto;min-width:150px}
+  select,input,textarea,button{font:inherit;color:inherit}
+  select,input[type=text],textarea{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+  textarea{min-height:120px;font-size:.85rem;font-family:ui-monospace,Menlo,Consolas,monospace}
+  :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  .tabs{display:flex;gap:4px;background:var(--raise);border-radius:10px;padding:4px;margin:14px 0}
+  .tabs button{flex:1;border:0;background:transparent;border-radius:7px;padding:8px 4px;font-family:var(--display);font-weight:600;font-size:.85rem;color:var(--muted);cursor:pointer}
+  .tabs button[aria-selected=true]{background:var(--surface);color:var(--purple);box-shadow:0 1px 2px rgba(20,20,50,.12)}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .stack{display:flex;flex-direction:column;gap:12px}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .between{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:9px;padding:9px 14px;font-family:var(--display);font-weight:600;font-size:.88rem;cursor:pointer}
+  .btn:hover{border-color:var(--muted)}
+  .btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}
+  .btn.ghost{border-style:dashed;color:var(--muted)}
+  .btn.small{padding:6px 10px;font-size:.8rem}
+  .chip{font-family:var(--display);font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:999px}
+  .chip.maken{background:var(--onSoft);color:var(--orange)}
+  .chip.ophalen{background:var(--blueSoft);color:var(--blue)}
+  .task{border-left:4px solid var(--orange);background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .task.ophalen{border-left-color:var(--blue)}
+  .item{display:flex;gap:10px;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:9px}
+  .item:first-of-type{border-top:0;padding-top:0}
+  .dots{display:inline-flex;gap:4px;align-items:center}
+  .dot{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--muted);display:inline-block}
+  .dot.r{background:var(--rood);border-color:var(--rood)}
+  .dot.o{background:var(--oranje);border-color:var(--oranje)}
+  .dot.g{background:var(--groen);border-color:var(--groen)}
+  .dot.num{position:relative}
+  table{border-collapse:collapse;width:100%;font-size:.85rem}
+  th,td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;white-space:nowrap}
+  th{font-family:var(--display);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .scroll{overflow-x:auto}
+  .qcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 16px;min-height:150px;display:flex;flex-direction:column;justify-content:center;gap:14px;text-align:center}
+  .qcard .q{font-family:var(--display);font-size:1.1rem;font-weight:600}
+  .qcard .a{font-size:1rem;color:var(--blue);border-top:1px dashed var(--line);padding-top:14px}
+  .grade{display:flex;gap:8px}
+  .grade button{flex:1;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:10px 4px;font-family:var(--display);font-weight:600;font-size:.82rem;cursor:pointer}
+  .grade button.r{color:var(--rood)} .grade button.o{color:var(--oranje)} .grade button.g{color:var(--groen)}
+  .note{background:var(--raise);border-radius:10px;padding:10px 12px;font-size:.85rem;color:var(--muted)}
+  .pill{font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  .hidden{display:none}
+  .cardrow{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center}
+  @media (max-width:520px){.cardrow{grid-template-columns:1fr auto}}
+  .foot{color:var(--muted);font-size:.78rem;text-align:center;padding-top:22px}
+  .example{font-size:.72rem;color:var(--orange);font-weight:600;font-family:var(--display);text-transform:uppercase;letter-spacing:.08em}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="topin">
+    <div class="brand">
+      <span class="lab">Periodeplanner havo 4 · periode 1</span>
+      <h1>Mijn ophaalsets</h1>
+    </div>
+    <label class="row" style="gap:6px">
+      <span class="lab">Week</span>
+      <select id="week" style="width:auto"></select>
+    </label>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tab-week" aria-selected="true" aria-controls="view-week">Deze week</button>
+    <button role="tab" id="tab-sets" aria-selected="false" aria-controls="view-sets">Mijn sets</button>
+    <button role="tab" id="tab-kaart" aria-selected="false" aria-controls="view-kaart">Periodekaart</button>
+    <button role="tab" id="tab-meer" aria-selected="false" aria-controls="view-meer">Meer</button>
+  </div>
+
+  <section id="view-week" class="stack" role="tabpanel" aria-labelledby="tab-week"></section>
+  <section id="view-sets" class="stack" role="tabpanel" aria-labelledby="tab-sets" hidden></section>
+  <section id="view-kaart" class="stack" role="tabpanel" aria-labelledby="tab-kaart" hidden></section>
+  <section id="view-meer" class="stack" role="tabpanel" aria-labelledby="tab-meer" hidden></section>
+
+  <p class="foot">Thorbecke Talentschool Rotterdam · alles blijft in deze browser</p>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------- weken en herhaalrooster (gelijk aan blz. 3 van het boekje) ---------- */
+  var WEKEN = [
+    {wk:37,dates:'7–11 sep'},{wk:38,dates:'14–18 sep'},{wk:39,dates:'21–25 sep'},
+    {wk:40,dates:'28 sep–2 okt'},{wk:41,dates:'5–9 okt'},{wk:42,dates:'12–16 okt'},
+    {wk:43,dates:'19–23 okt',vakantie:true},{wk:44,dates:'26–30 okt'},{wk:45,dates:'2–6 nov'},
+    {wk:46,dates:'9–13 nov',aftellen:true},{wk:47,dates:'16–20 nov',aftellen:true}
+  ];
+  // rij = stof van week, kolom = week waarin je ermee werkt
+  var PLAN = {
+    37:{39:{k:'maken',m:[2],note:'inhalen'},40:{k:'een',m:[4]},41:{k:'twee',m:[4]}},
+    38:{39:{k:'maken',m:[4],note:'inhalen'},40:{k:'een',m:[4]},42:{k:'twee',m:[4]}},
+    39:{39:{k:'maken',m:[1,3]},40:{k:'een',m:[2]},44:{k:'twee',m:[4]}},
+    40:{40:{k:'maken',m:[1,3]},41:{k:'een',m:[2]},45:{k:'twee',m:[4]}},
+    41:{41:{k:'maken',m:[1,3]},42:{k:'een',m:[2]}},
+    42:{42:{k:'maken',m:[1,3]},44:{k:'een',m:[2]}},
+    44:{44:{k:'maken',m:[1,3]},45:{k:'een',m:[2]}},
+    45:{45:{k:'maken',m:[1,3]}}
+  };
+  var KEER = {maken:0,een:1,twee:2,af:3};
+
+  /* ---------- opslag ---------- */
+  var KEY = 'ophaalset-h4-v1';
+  var data = laad();
+
+  function leeg(){
+    return {
+      vakken:['Ne','En','Maat','WiA','Bi','Sk','Na','BSM'],
+      sets:{},      // "38|Bi" -> {vorm:'flashcards'|'opdracht', kaarten:[{v,a}], opdracht:'', nakijken:'', voorbeeld:true}
+      scores:{},    // "38|Bi|1" -> 'r'|'o'|'g'
+      backupISO:null,
+      week:null
+    };
+  }
+  function laad(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(raw) return Object.assign(leeg(), JSON.parse(raw));
+    }catch(e){}
+    return voorbeeld(leeg());
+  }
+  function bewaar(){
+    try{ localStorage.setItem(KEY, JSON.stringify(data)); }
+    catch(e){ /* privévenster of opslag vol: de app blijft werken tot je hem sluit */ }
+  }
+  function voorbeeld(d){
+    d.sets['38|Bi'] = {vorm:'flashcards',voorbeeld:true,kaarten:[
+      {v:'Wat gebeurt er met een rode bloedcel in zuiver water? Waarom?',a:'Er stroomt water de cel in (osmose). De cel zwelt op en kan knappen.'},
+      {v:'Wat is het verschil tussen een plantencel en een dierlijke cel?',a:'Een plantencel heeft een celwand, bladgroenkorrels en één grote vacuole.'}
+    ]};
+    d.sets['38|WiA'] = {vorm:'opdracht',voorbeeld:true,opdracht:'Maak § 1.4 opg. 23 en 27 en § 1.2 opg. 8 door elkaar, zonder het voorbeeld erbij.',nakijken:'antwoorden achterin het boek'};
+    return d;
+  }
+
+  /* ---------- hulpjes ---------- */
+  function el(tag, attrs, kids){
+    var n = document.createElement(tag);
+    if(attrs) Object.keys(attrs).forEach(function(k){
+      if(k === 'class') n.className = attrs[k];
+      else if(k === 'text') n.textContent = attrs[k];
+      else if(k.slice(0,2) === 'on') n.addEventListener(k.slice(2), attrs[k]);
+      else if(attrs[k] !== null && attrs[k] !== undefined) n.setAttribute(k, attrs[k]);
+    });
+    (kids||[]).forEach(function(k){ if(k) n.appendChild(typeof k === 'string' ? document.createTextNode(k) : k); });
+    return n;
+  }
+  function sleutel(wk, vak){ return wk + '|' + vak; }
+  function setVan(wk, vak){ return data.sets[sleutel(wk, vak)]; }
+  function scoreVan(wk, vak, keer){ return data.scores[sleutel(wk, vak) + '|' + keer] || ''; }
+  function zetScore(wk, vak, keer, s){ data.scores[sleutel(wk, vak) + '|' + keer] = s; bewaar(); }
+  function weekNu(){
+    var d = new Date(), t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+    var jan1 = new Date(Date.UTC(t.getUTCFullYear(),0,1));
+    var w = Math.ceil(((t - jan1) / 86400000 + 1) / 7);
+    return Math.min(47, Math.max(37, w));
+  }
+  function dotsEl(wk, vak){
+    var d = el('span',{class:'dots'});
+    for(var i=1;i<=3;i++) d.appendChild(el('span',{class:'dot ' + scoreVan(wk,vak,i),title:i + 'e keer'}));
+    return d;
+  }
+
+  /* ---------- back-up ---------- */
+  function dagenSinds(iso){
+    if(!iso) return Infinity;
+    var d = new Date(iso);
+    if(isNaN(d)) return Infinity;
+    return Math.floor((Date.now() - d.getTime()) / 86400000);
+  }
+  function backupTekst(){
+    if(!data.backupISO) return 'Nog geen back-up gemaakt.';
+    var n = dagenSinds(data.backupISO);
+    var datum = new Date(data.backupISO).toLocaleDateString('nl-NL', {day:'numeric', month:'long'});
+    return 'Laatste back-up: ' + datum + (n === 0 ? ' (vandaag)' : n === 1 ? ' (gisteren)' : ' (' + n + ' dagen geleden)');
+  }
+  function bewaarBackup(knop, klaar){
+    var naam = 'ophaalsets-' + new Date().toISOString().slice(0,10) + '.json';
+    try{
+      var blob = new Blob([JSON.stringify(data)], {type:'application/json'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = naam; document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 1000);
+      data.backupISO = new Date().toISOString(); bewaar();
+      if(klaar) klaar(null);
+    }catch(e){
+      if(klaar) klaar({code:'unavailable'});
+    }
+    return Promise.resolve();
+  }
+
+  /* ---------- weergave: deze week ---------- */
+  var huidige = data.week || weekNu();
+
+  function toonWeek(){
+    var v = document.getElementById('view-week');
+    v.textContent = '';
+    var info = WEKEN.filter(function(w){ return w.wk === huidige; })[0] || {};
+
+    var eigenSets = Object.keys(data.sets).filter(function(k){ return !data.sets[k].voorbeeld; }).length;
+    if(eigenSets && dagenSinds(data.backupISO) >= 7){
+      var melding = el('p',{class:'sub',text:backupTekst()});
+      var knop = el('button',{class:'btn small primary'});
+      knop.textContent = 'Back-up opslaan';
+      knop.addEventListener('click', function(){
+        bewaarBackup(knop, function(err){
+          if(!err){ melding.textContent = backupTekst(); knop.textContent = 'Gelukt'; }
+          else if(err.code === 'declined'){ melding.textContent = 'Niet opgeslagen. Je kunt het later nog een keer proberen.'; }
+          else { kies('tab-meer'); toonMeer(); }
+        });
+      });
+      v.appendChild(el('div',{class:'task ophalen'},[
+        el('div',{class:'between'},[
+          el('div',{},[el('span',{class:'chip ophalen',text:'Back-up'}), el('h2',{text:' Zet je sets even veilig'})]),
+          knop
+        ]),
+        melding
+      ]));
+    }
+
+    if(info.vakantie){
+      v.appendChild(el('div',{class:'card'},[
+        el('h2',{text:'Herfstvakantie'}),
+        el('p',{class:'sub',text:'Rust. Zin in? Doe één mixmoment met sets van week 37–42.'})
+      ]));
+      return;
+    }
+    if(info.aftellen){
+      v.appendChild(el('div',{class:'card'},[
+        el('h2',{text:'Aftelweken'}),
+        el('p',{class:'sub',text:'Nu telt je aftelkalender op blz. 4: per toets drie keer ophalen, maximaal drie vakken per dag. Haal hier je oude sets op wanneer die aan de beurt zijn.'})
+      ]));
+    }
+
+    var maken = [], ophalen = [];
+    Object.keys(PLAN).forEach(function(stof){
+      var taak = PLAN[stof][huidige];
+      if(!taak) return;
+      (taak.k === 'maken' ? maken : ophalen).push({stof:Number(stof), taak:taak});
+    });
+
+    if(!maken.length && !ophalen.length && !info.aftellen){
+      v.appendChild(el('div',{class:'card'},[
+        el('h2',{text:'Nog niets te doen'}),
+        el('p',{class:'sub',text:'Het herhaalrooster start in week 39. Maak alvast sets van de lessen die je nu hebt: kies een week bij "Mijn sets".'})
+      ]));
+    }
+
+    maken.forEach(function(x){
+      var kop = el('div',{class:'between'},[
+        el('div',{},[
+          el('span',{class:'chip maken',text:'Set maken'}),
+          el('h2',{text:' Stof van week ' + x.stof + (x.taak.note ? ' (' + x.taak.note + ')' : '')})
+        ]),
+        el('span',{class:'pill',text:'studiemoment ' + x.taak.m.join(' en ')})
+      ]);
+      var blok = el('div',{class:'task'},[kop]);
+      data.vakken.forEach(function(vak){
+        var s = setVan(x.stof, vak);
+        blok.appendChild(el('div',{class:'item'},[
+          el('div',{},[
+            el('strong',{text:vak}),
+            el('div',{class:'sub',text: s ? (s.vorm === 'flashcards' ? s.kaarten.length + ' flashcards' : 'ophaalbriefje') : 'nog geen set'})
+          ]),
+          el('button',{class:'btn small' + (s ? '' : ' primary'),onclick:function(){ bewerkSet(x.stof, vak); },text: s ? 'Bekijk' : 'Maken'})
+        ]));
+      });
+      v.appendChild(blok);
+    });
+
+    ophalen.forEach(function(x){
+      var keer = KEER[x.taak.k];
+      var kop = el('div',{class:'between'},[
+        el('div',{},[
+          el('span',{class:'chip ophalen',text: keer + 'e keer ophalen'}),
+          el('h2',{text:' Set van week ' + x.stof})
+        ]),
+        el('span',{class:'pill',text:'studiemoment ' + x.taak.m.join(' en ')})
+      ]);
+      var blok = el('div',{class:'task ophalen'},[kop]);
+      data.vakken.forEach(function(vak){
+        var s = setVan(x.stof, vak);
+        var klaar = scoreVan(x.stof, vak, keer);
+        blok.appendChild(el('div',{class:'item'},[
+          el('div',{},[
+            el('strong',{text:vak}),
+            el('div',{class:'sub'},[ s ? dotsEl(x.stof, vak) : el('span',{text:'geen set gemaakt'}) ])
+          ]),
+          s ? el('button',{class:'btn small' + (klaar ? '' : ' primary'),onclick:function(){ start(x.stof, vak, keer); },
+                text: klaar ? 'Nog eens' : 'Ophalen'})
+            : el('button',{class:'btn small ghost',onclick:function(){ bewerkSet(x.stof, vak); },text:'Set maken'})
+        ]));
+      });
+      v.appendChild(blok);
+    });
+
+    v.appendChild(el('p',{class:'note',text:'In een studiemoment (± 45 min): eerst je huiswerk, dan ± 15 minuten maken of ophalen. Ophalen = uit je hoofd, daarna pas nakijken.'}));
+
+  }
+
+  /* ---------- overhoren ---------- */
+  function start(wk, vak, keer){
+    var s = setVan(wk, vak);
+    if(!s) return;
+    var v = document.getElementById('view-week');
+    v.textContent = '';
+    var goed = 0, half = 0, fout = 0, i = 0;
+    var vragen = s.vorm === 'flashcards' ? s.kaarten.slice() : [{v:s.opdracht, a:'Nakijken met: ' + (s.nakijken || 'je boek')}];
+    for(var j = vragen.length - 1; j > 0; j--){ var r = Math.floor(Math.random() * (j + 1)); var tmp = vragen[j]; vragen[j] = vragen[r]; vragen[r] = tmp; }
+
+    var kop = el('div',{class:'between'},[
+      el('div',{},[el('span',{class:'chip ophalen',text: keer + 'e keer'}), el('h2',{text:' ' + vak + ' · week ' + wk})]),
+      el('button',{class:'btn small',onclick:function(){ toonWeek(); },text:'Stoppen'})
+    ]);
+    var kaart = el('div',{class:'qcard'});
+    var knoppen = el('div',{class:'stack'});
+    v.appendChild(el('div',{class:'stack'},[kop, kaart, knoppen,
+      el('p',{class:'note',text:'Zeg of schrijf je antwoord eerst zelf op. Daarna pas omdraaien: dat is het hele punt van ophalen.'})]));
+
+    function volgende(){
+      kaart.textContent = ''; knoppen.textContent = '';
+      if(i >= vragen.length) return klaar();
+      var q = vragen[i];
+      kaart.appendChild(el('p',{class:'q',text:q.v}));
+      kaart.appendChild(el('p',{class:'pill',text:(i+1) + ' van ' + vragen.length}));
+      knoppen.appendChild(el('button',{class:'btn primary',onclick:draai,text:'Toon antwoord'}));
+    }
+    function draai(){
+      knoppen.textContent = '';
+      kaart.insertBefore(el('p',{class:'a',text:vragen[i].a}), kaart.lastChild);
+      var g = el('div',{class:'grade'},[
+        el('button',{class:'r',onclick:function(){ fout++; i++; volgende(); },text:'Wist ik niet'}),
+        el('button',{class:'o',onclick:function(){ half++; i++; volgende(); },text:'Deels'}),
+        el('button',{class:'g',onclick:function(){ goed++; i++; volgende(); },text:'Wist ik'})
+      ]);
+      knoppen.appendChild(g);
+    }
+    function klaar(){
+      var score = fout > 0 ? 'r' : (half > 0 ? 'o' : 'g');
+      zetScore(wk, vak, keer, score);
+      var tekst = score === 'g' ? 'Alles goed: groen bolletje.' : (score === 'o' ? 'Deels: oranje bolletje. Dit komt nog een keer terug.' : 'Een paar wist je niet: rood bolletje. Normaal — juist daar leer je van.');
+      kaart.appendChild(el('p',{class:'q',text:'Klaar!'}));
+      kaart.appendChild(el('p',{class:'sub',text:tekst}));
+      kaart.appendChild(dotsEl(wk, vak));
+      knoppen.appendChild(el('button',{class:'btn primary',onclick:function(){ toonWeek(); },text:'Terug naar deze week'}));
+      if(score !== 'g') knoppen.appendChild(el('button',{class:'btn',onclick:function(){ start(wk, vak, keer); },text:'Fouten nog een keer'}));
+    }
+    volgende();
+  }
+
+  /* ---------- sets maken en bewerken ---------- */
+  function bewerkSet(wk, vak){
+    kies('tab-sets');
+    var v = document.getElementById('view-sets');
+    v.textContent = '';
+    var s = setVan(wk, vak) || {vorm:'flashcards', kaarten:[]};
+    var kop = el('div',{class:'between'},[
+      el('h2',{text:vak + ' · week ' + wk}),
+      el('button',{class:'btn small',onclick:toonSets,text:'Terug'})
+    ]);
+    var body = el('div',{class:'stack'});
+    var wrap = el('div',{class:'card'},[kop, body]);
+    v.appendChild(wrap);
+
+    function teken(){
+      body.textContent = '';
+      if(s.voorbeeld) body.appendChild(el('p',{class:'example',text:'Voorbeeldset — pas hem aan of verwijder hem'}));
+      var keuze = el('div',{class:'row'},[
+        el('button',{class:'btn small' + (s.vorm === 'flashcards' ? ' primary' : ''),onclick:function(){ s.vorm = 'flashcards'; teken(); },text:'Flashcards'}),
+        el('button',{class:'btn small' + (s.vorm === 'opdracht' ? ' primary' : ''),onclick:function(){ s.vorm = 'opdracht'; teken(); },text:'Ophaalbriefje'})
+      ]);
+      body.appendChild(keuze);
+
+      if(s.vorm === 'flashcards'){
+        s.kaarten = s.kaarten || [];
+        s.kaarten.forEach(function(k, idx){
+          var vIn = el('input',{type:'text',value:k.v,placeholder:'Vraag',oninput:function(e){ k.v = e.target.value; }});
+          var aIn = el('input',{type:'text',value:k.a,placeholder:'Antwoord',oninput:function(e){ k.a = e.target.value; }});
+          body.appendChild(el('div',{class:'cardrow'},[vIn, aIn,
+            el('button',{class:'btn small',onclick:function(){ s.kaarten.splice(idx,1); teken(); },title:'Verwijderen',text:'×'})]));
+        });
+        body.appendChild(el('button',{class:'btn ghost',onclick:function(){ s.kaarten.push({v:'',a:''}); teken(); },text:'+ Flashcard'}));
+        body.appendChild(el('p',{class:'sub',text:'Vraagstarters: Wat is …? · Waarom …? · Wat is het verschil tussen … en …? · Hoe werkt …? · Bereken …'}));
+      } else {
+        body.appendChild(el('label',{class:'stack'},[
+          el('span',{class:'lab',text:'Opdracht'}),
+          el('textarea',{placeholder:'Bijv. Maak § 1.4 opg. 23 en 27 door elkaar · Braindump § 2.1 · Teken de koolstofkringloop uit je hoofd',oninput:function(e){ s.opdracht = e.target.value; },text:s.opdracht||''})
+        ]));
+        body.appendChild(el('label',{class:'stack'},[
+          el('span',{class:'lab',text:'Nakijken met'}),
+          el('input',{type:'text',value:s.nakijken||'',placeholder:'Bijv. antwoorden achterin · § 2.1',oninput:function(e){ s.nakijken = e.target.value; }})
+        ]));
+      }
+
+      body.appendChild(el('div',{class:'row'},[
+        el('button',{class:'btn primary',onclick:function(){
+          s.voorbeeld = false;
+          if(s.vorm === 'flashcards') s.kaarten = s.kaarten.filter(function(k){ return k.v.trim() || k.a.trim(); });
+          data.sets[sleutel(wk,vak)] = s; bewaar(); toonSets();
+        },text:'Bewaren'}),
+        el('button',{class:'btn',onclick:function(){
+          delete data.sets[sleutel(wk,vak)]; bewaar(); toonSets();
+        },text:'Verwijderen'})
+      ]));
+    }
+    teken();
+  }
+
+  function toonSets(){
+    var v = document.getElementById('view-sets');
+    v.textContent = '';
+    var kies = el('select',{id:'setweek',onchange:function(e){ vulLijst(Number(e.target.value)); }});
+    WEKEN.filter(function(w){ return !w.vakantie; }).forEach(function(w){
+      kies.appendChild(el('option',{value:w.wk,selected: w.wk === huidige ? 'selected' : null,text:'Week ' + w.wk + ' · ' + w.dates}));
+    });
+    var lijst = el('div',{class:'stack'});
+    v.appendChild(el('div',{class:'card'},[
+      el('h2',{text:'Sets per week'}),
+      el('p',{class:'sub',text:'Maak in de week van de les per vak een set: flashcards of een ophaalbriefje met een opdracht.'}),
+      kies, lijst
+    ]));
+    function vulLijst(wk){
+      lijst.textContent = '';
+      data.vakken.forEach(function(vak){
+        var s = setVan(wk, vak);
+        lijst.appendChild(el('div',{class:'item'},[
+          el('div',{},[
+            el('strong',{text:vak}),
+            el('div',{class:'sub',text: s ? (s.vorm === 'flashcards' ? s.kaarten.length + ' flashcards' : 'ophaalbriefje: ' + (s.opdracht||'').slice(0,40)) : 'nog geen set'})
+          ]),
+          el('button',{class:'btn small',onclick:function(){ bewerkSet(wk, vak); },text: s ? 'Bewerken' : 'Maken'})
+        ]));
+      });
+    }
+    vulLijst(Number(kies.value));
+  }
+
+  /* ---------- periodekaart ---------- */
+  function toonKaart(){
+    var v = document.getElementById('view-kaart');
+    v.textContent = '';
+    var tbl = el('table');
+    var kop = el('tr',{},[el('th',{text:'Week'})]);
+    data.vakken.forEach(function(vak){ kop.appendChild(el('th',{text:vak})); });
+    tbl.appendChild(el('thead',{},[kop]));
+    var body = el('tbody');
+    WEKEN.forEach(function(w){
+      if(w.vakantie || w.aftellen) return;
+      var tr = el('tr',{},[el('th',{text:'wk ' + w.wk})]);
+      data.vakken.forEach(function(vak){
+        var td = el('td');
+        if(setVan(w.wk, vak)) td.appendChild(dotsEl(w.wk, vak));
+        else td.appendChild(el('span',{class:'sub',text:'–'}));
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+    tbl.appendChild(body);
+    v.appendChild(el('div',{class:'card'},[
+      el('h2',{text:'Periodekaart'}),
+      el('p',{class:'sub',text:'Elk bolletje is één ophaalmoment: 1e, 2e en 3e keer. Doel: het derde bolletje groen.'}),
+      el('div',{class:'scroll'},[tbl])
+    ]));
+  }
+
+  /* ---------- meer: vakken, back-up, uitleg ---------- */
+  function toonMeer(){
+    var v = document.getElementById('view-meer');
+    v.textContent = '';
+
+    var vakInput = el('input',{type:'text',value:data.vakken.join(', '),id:'vakken'});
+    v.appendChild(el('div',{class:'card'},[
+      el('h2',{text:'Mijn vakken'}),
+      el('p',{class:'sub',text:'Gescheiden door komma’s.'}),
+      vakInput,
+      el('button',{class:'btn primary',onclick:function(){
+        var lijst = vakInput.value.split(',').map(function(x){ return x.trim(); }).filter(Boolean);
+        if(lijst.length){ data.vakken = lijst; bewaar(); tekenAlles(); }
+      },text:'Bewaren'})
+    ]));
+
+    var status = el('p',{class:'sub',text: backupTekst()});
+    var bestand = el('input',{type:'file',accept:'.json,application/json',id:'herstel',style:'display:none',onchange:function(e){
+      var f = e.target.files && e.target.files[0];
+      if(!f) return;
+      var lezer = new FileReader();
+      lezer.onload = function(){ zetTerug(String(lezer.result)); };
+      lezer.readAsText(f);
+      e.target.value = '';
+    }});
+    var handmatig = el('div',{class:'stack',hidden:'hidden'});
+    var ta = el('textarea',{id:'backup'});
+    ta.value = JSON.stringify(data);
+    handmatig.appendChild(el('p',{class:'sub',text:'Lukt opslaan niet? Kopieer deze tekst naar een bestand, of plak een oude back-up en kies Terugzetten.'}));
+    handmatig.appendChild(ta);
+    handmatig.appendChild(el('div',{class:'row'},[
+      el('button',{class:'btn small',onclick:function(){
+        ta.select();
+        try{ navigator.clipboard.writeText(ta.value); }catch(e){ try{ document.execCommand('copy'); }catch(e2){} }
+      },text:'Kopieer'}),
+      el('button',{class:'btn small',onclick:function(){ zetTerug(ta.value); },text:'Tekst terugzetten'})
+    ]));
+
+    function zetTerug(tekst){
+      try{
+        var nieuw = JSON.parse(tekst);
+        if(!nieuw.vakken || !nieuw.sets) throw new Error('bad');
+        data = Object.assign(leeg(), nieuw); bewaar(); tekenAlles(); kies('tab-meer');
+        alert('Back-up teruggezet: je sets staan er weer in.');
+      }catch(e){ alert('Dit bestand kon ik niet lezen. Kies het back-upbestand dat de app zelf heeft opgeslagen (eindigt op .json).'); }
+    }
+
+    var opslaan = el('button',{class:'btn primary'});
+    opslaan.textContent = 'Back-up opslaan';
+    opslaan.addEventListener('click', function(){
+      bewaarBackup(opslaan, function(err){
+        if(!err){ status.textContent = backupTekst(); return; }
+        if(err.code === 'declined'){ status.textContent = 'Niet opgeslagen. ' + backupTekst(); return; }
+        handmatig.hidden = false;
+        status.textContent = 'Opslaan lukt in deze browser niet. Gebruik de tekst hieronder.';
+      });
+    });
+
+    v.appendChild(el('div',{class:'card'},[
+      el('h2',{text:'Back-up'}),
+      el('p',{class:'sub',text:'Je sets staan alleen in deze browser. Sla ze af en toe op als bestand, bijvoorbeeld in je OneDrive. Nieuwe telefoon of gegevens gewist? Kies dat bestand bij Terugzetten.'}),
+      status,
+      el('div',{class:'row'},[
+        opslaan,
+        el('button',{class:'btn',onclick:function(){ bestand.click(); },text:'Terugzetten uit bestand'}),
+        el('button',{class:'btn small ghost',onclick:function(){ handmatig.hidden = !handmatig.hidden; },text:'Handmatig'})
+      ]),
+      bestand,
+      handmatig
+    ]));
+
+    v.appendChild(el('div',{class:'card'},[
+      el('h2',{text:'Zet op je beginscherm'}),
+      el('p',{class:'sub',text:'Open deze pagina in Safari of Chrome, kies Delen of het menu, en daarna “Zet op beginscherm”. Dan opent hij als een app én blijft je opslag veel langer bewaard.'}),
+      el('p',{class:'sub',text:'Let op: als je je browsergegevens wist, ben je je sets kwijt. Maak dus af en toe een back-up.'})
+    ]));
+
+    v.appendChild(el('div',{class:'card'},[
+      el('h2',{text:'Hoe het werkt'}),
+      el('p',{class:'sub',text:'Dit is de digitale versie van blz. 3 van je periodeplanner. Je maakt in de week van de les een ophaalset per vak. Die set komt drie keer terug: 1 week later, ± 1 maand later en in de aftelweken. Na elke keer kleurt een bolletje: rood, oranje of groen.'}),
+      el('p',{class:'sub',text:'Werk per vak: doe eerst één vak ± 10–15 minuten en mix daarbinnen paragrafen door elkaar. Daarna pas het volgende vak.'})
+    ]));
+  }
+
+  /* ---------- tabs ---------- */
+  var VIEWS = {'tab-week':'view-week','tab-sets':'view-sets','tab-kaart':'view-kaart','tab-meer':'view-meer'};
+  function kies(id){
+    Object.keys(VIEWS).forEach(function(t){
+      var aan = t === id;
+      document.getElementById(t).setAttribute('aria-selected', aan ? 'true' : 'false');
+      document.getElementById(VIEWS[t]).hidden = !aan;
+    });
+    try{ localStorage.setItem(KEY + '-tab', id); }catch(e){}
+  }
+  Object.keys(VIEWS).forEach(function(t){
+    document.getElementById(t).addEventListener('click', function(){
+      kies(t);
+      if(t === 'tab-sets') toonSets();
+      if(t === 'tab-kaart') toonKaart();
+      if(t === 'tab-meer') toonMeer();
+      if(t === 'tab-week') toonWeek();
+    });
+  });
+
+  /* ---------- weekkiezer ---------- */
+  var sel = document.getElementById('week');
+  WEKEN.forEach(function(w){
+    sel.appendChild(el('option',{value:w.wk,selected: w.wk === huidige ? 'selected' : null,text:'wk ' + w.wk}));
+  });
+  sel.addEventListener('change', function(e){
+    huidige = Number(e.target.value); data.week = huidige; bewaar(); tekenAlles();
+  });
+
+  function tekenAlles(){ toonWeek(); toonSets(); toonKaart(); toonMeer(); }
+  tekenAlles();
+  var bewaardeTab = null;
+  try{ bewaardeTab = localStorage.getItem(KEY + '-tab'); }catch(e){}
+  kies(VIEWS[bewaardeTab] ? bewaardeTab : 'tab-week');
+})();
+</script>
+</body>
+</html>
