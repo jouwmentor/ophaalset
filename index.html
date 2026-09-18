@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#24185A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ophaalsets">
-<title>Ophaalset havo 4</title>
+<title>Ophaalsets · periodeplanner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap">
@@ -86,7 +86,7 @@
   th{font-family:var(--display);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
   .scroll{overflow-x:auto}
   .qcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 16px;min-height:150px;display:flex;flex-direction:column;justify-content:center;gap:14px;text-align:center}
-  .qcard .q{font-family:var(--display);font-size:1.1rem;font-weight:600}
+  .qcard .q{font-family:var(--display);font-size:1.1rem;font-weight:600;white-space:pre-line}
   .qcard .a{font-size:1rem;color:var(--blue);border-top:1px dashed var(--line);padding-top:14px}
   .grade{display:flex;gap:8px}
   .grade button{flex:1;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:10px 4px;font-family:var(--display);font-weight:600;font-size:.82rem;cursor:pointer}
@@ -105,7 +105,7 @@
 <header class="top">
   <div class="topin">
     <div class="brand">
-      <span class="lab">Periodeplanner havo 4 · periode 1</span>
+      <span class="lab" id="spoorkop">Periodeplanner · periode 1</span>
       <h1>Mijn ophaalsets</h1>
     </div>
     <label class="row" style="gap:6px">
@@ -136,24 +136,29 @@
   'use strict';
 
   /* ---------- weken en herhaalrooster (gelijk aan blz. 3 van het boekje) ---------- */
-  var WEKEN = [
-    {wk:37,dates:'7–11 sep'},{wk:38,dates:'14–18 sep'},{wk:39,dates:'21–25 sep'},
-    {wk:40,dates:'28 sep–2 okt'},{wk:41,dates:'5–9 okt'},{wk:42,dates:'12–16 okt'},
-    {wk:43,dates:'19–23 okt',vakantie:true},{wk:44,dates:'26–30 okt'},{wk:45,dates:'2–6 nov'},
-    {wk:46,dates:'9–13 nov',aftellen:true},{wk:47,dates:'16–20 nov',aftellen:true}
-  ];
-  // rij = stof van week, kolom = week waarin je ermee werkt
-  var PLAN = {
-    37:{39:{k:'maken',m:[2],note:'inhalen'},40:{k:'een',m:[4]},41:{k:'twee',m:[4]}},
-    38:{39:{k:'maken',m:[4],note:'inhalen'},40:{k:'een',m:[4]},42:{k:'twee',m:[4]}},
-    39:{39:{k:'maken',m:[1,3]},40:{k:'een',m:[2]},44:{k:'twee',m:[4]}},
-    40:{40:{k:'maken',m:[1,3]},41:{k:'een',m:[2]},45:{k:'twee',m:[4]}},
-    41:{41:{k:'maken',m:[1,3]},42:{k:'een',m:[2]}},
-    42:{42:{k:'maken',m:[1,3]},44:{k:'een',m:[2]}},
-    44:{44:{k:'maken',m:[1,3]},45:{k:'een',m:[2]}},
-    45:{45:{k:'maken',m:[1,3]}}
-  };
+  /* rooster per periode en spoor — gegenereerd uit dezelfde bron als de boekjes */
+  var SCHEMAS = {"1":{"tw":{"naam":"Niet-examenklassen","toets":"Toetsweek 1","periode":"do 19 – wo 25 november","weken":[{"wk":37,"dates":"7–11 sep"},{"wk":38,"dates":"14–18 sep"},{"wk":39,"dates":"21–25 sep"},{"wk":40,"dates":"28 sep–2 okt"},{"wk":41,"dates":"5–9 okt"},{"wk":42,"dates":"12–16 okt"},{"wk":43,"dates":"19–23 okt","vakantie":true},{"wk":44,"dates":"26–30 okt"},{"wk":45,"dates":"2–6 nov"},{"wk":46,"dates":"9–13 nov","aftellen":true},{"wk":47,"dates":"16–20 nov","aftellen":true}],"plan":{"37":{"39":{"k":"maken","m":[2],"note":"inhalen"},"40":{"k":"een","m":[4]},"41":{"k":"twee","m":[4]}},"38":{"39":{"k":"maken","m":[4],"note":"inhalen"},"40":{"k":"een","m":[4]},"42":{"k":"twee","m":[4]}},"39":{"39":{"k":"maken","m":[1,3]},"40":{"k":"een","m":[2]},"44":{"k":"twee","m":[4]}},"40":{"40":{"k":"maken","m":[1,3]},"41":{"k":"een","m":[2]},"45":{"k":"twee","m":[4]}},"41":{"41":{"k":"maken","m":[1,3]},"42":{"k":"een","m":[2]}},"42":{"42":{"k":"maken","m":[1,3]},"44":{"k":"een","m":[2]}},"44":{"44":{"k":"maken","m":[1,3]},"45":{"k":"een","m":[2]}},"45":{"45":{"k":"maken","m":[1,3]}}}},"se":{"naam":"Examenklassen","toets":"SE-week 1","periode":"ma 2 – vr 6 november","weken":[{"wk":37,"dates":"7–11 sep"},{"wk":38,"dates":"14–18 sep"},{"wk":39,"dates":"21–25 sep"},{"wk":40,"dates":"28 sep–2 okt"},{"wk":41,"dates":"5–9 okt"},{"wk":42,"dates":"12–16 okt"},{"wk":43,"dates":"19–23 okt","vakantie":true},{"wk":44,"dates":"26–30 okt","aftellen":true}],"plan":{"37":{"39":{"k":"maken","m":[2],"note":"inhalen"},"40":{"k":"een","m":[4]}},"38":{"39":{"k":"maken","m":[4],"note":"inhalen"},"41":{"k":"een","m":[4]}},"39":{"39":{"k":"maken","m":[1,3]},"40":{"k":"een","m":[2]},"42":{"k":"twee","m":[4]}},"40":{"40":{"k":"maken","m":[1,3]},"41":{"k":"een","m":[2]}},"41":{"41":{"k":"maken","m":[1,3]},"42":{"k":"een","m":[2]}},"42":{"42":{"k":"maken","m":[1,3]}}}}},"2":{"tw":{"naam":"Niet-examenklassen","toets":"Toetsweek 2","periode":"do 18 – do 25 maart","weken":[{"wk":2,"dates":"5–8 jan"},{"wk":3,"dates":"11–15 jan"},{"wk":4,"dates":"18–22 jan"},{"wk":5,"dates":"25–29 jan"},{"wk":6,"dates":"1–5 feb"},{"wk":7,"dates":"8–12 feb"},{"wk":8,"dates":"22–26 feb","vakantie":true},{"wk":9,"dates":"1–5 mrt"},{"wk":10,"dates":"8–12 mrt","aftellen":true},{"wk":11,"dates":"15–17 mrt","aftellen":true}],"plan":{"2":{"4":{"k":"maken","m":[2],"note":"inhalen"},"5":{"k":"een","m":[2]},"9":{"k":"twee","m":[4]}},"3":{"4":{"k":"maken","m":[4],"note":"inhalen"},"5":{"k":"een","m":[2]},"9":{"k":"twee","m":[4]}},"4":{"4":{"k":"maken","m":[1,3]},"5":{"k":"een","m":[4]},"9":{"k":"twee","m":[2]}},"5":{"5":{"k":"maken","m":[1,3]},"6":{"k":"een","m":[2]}},"6":{"6":{"k":"maken","m":[1,3]},"7":{"k":"een","m":[2]}},"7":{"7":{"k":"maken","m":[1,3]},"9":{"k":"een","m":[2]}},"9":{"9":{"k":"maken","m":[1,3]}}}},"se":{"naam":"Examenklassen","toets":"SE-week 2","periode":"ma 18 – vr 22 januari","weken":[{"wk":46,"dates":"9–13 nov"},{"wk":47,"dates":"16–20 nov"},{"wk":48,"dates":"23–27 nov"},{"wk":49,"dates":"30 nov–4 dec"},{"wk":50,"dates":"7–11 dec"},{"wk":51,"dates":"14–18 dec"},{"wk":52,"dates":"21 dec–1 jan","vakantie":true},{"wk":1,"dates":"5–8 jan","aftellen":true},{"wk":2,"dates":"11–15 jan","aftellen":true}],"plan":{"46":{"48":{"k":"maken","m":[2],"note":"inhalen"},"49":{"k":"een","m":[2]},"51":{"k":"twee","m":[4]}},"47":{"48":{"k":"maken","m":[4],"note":"inhalen"},"49":{"k":"een","m":[2]},"51":{"k":"twee","m":[4]}},"48":{"48":{"k":"maken","m":[1,3]},"49":{"k":"een","m":[4]},"51":{"k":"twee","m":[2]}},"49":{"49":{"k":"maken","m":[1,3]},"50":{"k":"een","m":[2]}},"50":{"50":{"k":"maken","m":[1,3]},"51":{"k":"een","m":[2]}},"51":{"51":{"k":"maken","m":[1,3]}}}}},"3":{"tw":{"naam":"Niet-examenklassen","toets":"Toetsweek 3","periode":"ma 14 – di 22 juni","weken":[{"wk":13,"dates":"30 mrt–2 apr"},{"wk":14,"dates":"5–9 apr"},{"wk":15,"dates":"12–16 apr"},{"wk":16,"dates":"19–23 apr","vakantie":true},{"wk":17,"dates":"26 apr–7 mei","vakantie":true},{"wk":19,"dates":"10–14 mei"},{"wk":20,"dates":"17–21 mei"},{"wk":21,"dates":"24–28 mei"},{"wk":22,"dates":"31 mei–4 jun","aftellen":true},{"wk":23,"dates":"7–11 jun","aftellen":true}],"plan":{"13":{"15":{"k":"maken","m":[2],"note":"inhalen"},"19":{"k":"een","m":[2]},"21":{"k":"twee","m":[4]}},"14":{"15":{"k":"maken","m":[4],"note":"inhalen"},"19":{"k":"een","m":[2]},"21":{"k":"twee","m":[4]}},"15":{"15":{"k":"maken","m":[1,3]},"19":{"k":"een","m":[4]},"21":{"k":"twee","m":[2]}},"19":{"19":{"k":"maken","m":[1,3]},"20":{"k":"een","m":[2]}},"20":{"20":{"k":"maken","m":[1,3]},"21":{"k":"een","m":[2]}},"21":{"21":{"k":"maken","m":[1,3]}}}},"se":{"naam":"Examenklassen","toets":"SE-week 3","periode":"do 18 – do 25 maart","weken":[{"wk":4,"dates":"25–29 jan"},{"wk":5,"dates":"1–5 feb"},{"wk":6,"dates":"8–12 feb"},{"wk":7,"dates":"15–19 feb"},{"wk":8,"dates":"22–26 feb","vakantie":true},{"wk":9,"dates":"1–5 mrt"},{"wk":10,"dates":"8–12 mrt","aftellen":true},{"wk":11,"dates":"15–17 mrt","aftellen":true}],"plan":{"4":{"6":{"k":"maken","m":[2],"note":"inhalen"},"7":{"k":"een","m":[2]}},"5":{"6":{"k":"maken","m":[4],"note":"inhalen"},"7":{"k":"een","m":[2]}},"6":{"6":{"k":"maken","m":[1,3]},"7":{"k":"een","m":[4]}},"7":{"7":{"k":"maken","m":[1,3]},"9":{"k":"een","m":[2]}},"9":{"9":{"k":"maken","m":[1,3]}}}}}};
+  var WEKEN = [], PLAN = {}, PERIODE = 1, SPOOR = 'tw';
+  function huidigSchema(){ return (SCHEMAS[PERIODE] || {})[SPOOR] || SCHEMAS['1'].tw; }
+  function zetSchema(per, id){
+    PERIODE = SCHEMAS[per] ? per : '1';
+    SPOOR = SCHEMAS[PERIODE][id] ? id : 'tw';
+    WEKEN = huidigSchema().weken;
+    PLAN = huidigSchema().plan;
+  }
+
   var KEER = {maken:0,een:1,twee:2,af:3};
+  var MANIEREN = [
+    {id:'braindump', naam:'Braindump', hint:'Schrijf 5 minuten alles op wat je nog weet. Vul daarna aan uit je boek.'},
+    {id:'schema', naam:'Schema tekenen', hint:'Teken het proces, de kringloop of de tekening uit je hoofd.'},
+    {id:'opgaven', naam:'Opgaven maken', hint:'Welke opgaven? Zet er ook een paar uit een oudere paragraaf bij.'},
+    {id:'oefenvragen', naam:'Oefenvragen', hint:'Vragen uit de methode, bijvoorbeeld Test jezelf of een oefentoets.'},
+    {id:'uitleggen', naam:'Uitleggen', hint:'Wat leg je hardop uit, zonder boek? Aan wie?'}
+  ];
+  function manierNaam(id){
+    for(var i=0;i<MANIEREN.length;i++) if(MANIEREN[i].id === id) return MANIEREN[i].naam;
+    return 'Opdracht';
+  }
 
   /* ---------- opslag ---------- */
   var KEY = 'ophaalset-h4-v1';
@@ -165,6 +170,8 @@
       sets:{},      // "38|Bi" -> {vorm:'flashcards'|'opdracht', kaarten:[{v,a}], opdracht:'', nakijken:'', voorbeeld:true}
       scores:{},    // "38|Bi|1" -> 'r'|'o'|'g'
       backupISO:null,
+      spoor:null,
+      periode:null,
       week:null
     };
   }
@@ -173,21 +180,12 @@
       var raw = localStorage.getItem(KEY);
       if(raw) return Object.assign(leeg(), JSON.parse(raw));
     }catch(e){}
-    return voorbeeld(leeg());
+    return leeg();
   }
   function bewaar(){
     try{ localStorage.setItem(KEY, JSON.stringify(data)); }
     catch(e){ /* privévenster of opslag vol: de app blijft werken tot je hem sluit */ }
   }
-  function voorbeeld(d){
-    d.sets['38|Bi'] = {vorm:'flashcards',voorbeeld:true,kaarten:[
-      {v:'Wat gebeurt er met een rode bloedcel in zuiver water? Waarom?',a:'Er stroomt water de cel in (osmose). De cel zwelt op en kan knappen.'},
-      {v:'Wat is het verschil tussen een plantencel en een dierlijke cel?',a:'Een plantencel heeft een celwand, bladgroenkorrels en één grote vacuole.'}
-    ]};
-    d.sets['38|WiA'] = {vorm:'opdracht',voorbeeld:true,opdracht:'Maak § 1.4 opg. 23 en 27 en § 1.2 opg. 8 door elkaar, zonder het voorbeeld erbij.',nakijken:'antwoorden achterin het boek'};
-    return d;
-  }
-
   /* ---------- hulpjes ---------- */
   function el(tag, attrs, kids){
     var n = document.createElement(tag);
@@ -201,6 +199,11 @@
     return n;
   }
   function sleutel(wk, vak){ return wk + '|' + vak; }
+  function omschrijf(s){
+    var par = s.par ? ' · ' + s.par : '';
+    if(s.vorm === 'flashcards') return (s.kaarten ? s.kaarten.length : 0) + ' flashcards' + par;
+    return manierNaam(s.manier) + par;
+  }
   function setVan(wk, vak){ return data.sets[sleutel(wk, vak)]; }
   function scoreVan(wk, vak, keer){ return data.scores[sleutel(wk, vak) + '|' + keer] || ''; }
   function zetScore(wk, vak, keer, s){ data.scores[sleutel(wk, vak) + '|' + keer] = s; bewaar(); }
@@ -247,12 +250,39 @@
   }
 
   /* ---------- weergave: deze week ---------- */
+  zetSchema(String(data.periode || '1'), data.spoor || 'tw');
   var huidige = data.week || weekNu();
 
   function toonWeek(){
     var v = document.getElementById('view-week');
     v.textContent = '';
     var info = WEKEN.filter(function(w){ return w.wk === huidige; })[0] || {};
+
+    if(!data.spoor || !data.periode){
+      var kaartKeuze = el('div',{class:'card'},[
+        el('h2',{text:'Even instellen'}),
+        el('p',{class:'sub',text:'Kies je periode en je klas. Daarmee weet de app welk herhaalrooster bij jou hoort — hetzelfde als in je boekje.'})
+      ]);
+      var rijP = el('div',{class:'row'});
+      ['1','2','3'].forEach(function(p){
+        rijP.appendChild(el('button',{class:'btn small' + (String(data.periode) === p ? ' primary' : ''),onclick:function(){
+          data.periode = p; bewaar(); toonWeek();
+        },text:'Periode ' + p}));
+      });
+      kaartKeuze.appendChild(el('div',{class:'stack'},[el('span',{class:'lab',text:'Periode'}), rijP]));
+      var rijS = el('div',{class:'row'});
+      ['tw','se'].forEach(function(id){
+        var sch = SCHEMAS[String(data.periode || '1')][id];
+        rijS.appendChild(el('button',{class:'btn small' + (data.spoor === id ? ' primary' : ''),onclick:function(){
+          data.spoor = id;
+          if(!data.periode) data.periode = '1';
+          zetSchema(String(data.periode), id); bewaar(); vulWeken(); tekenAlles();
+        },text: sch.naam + ' · ' + sch.toets}));
+      });
+      kaartKeuze.appendChild(el('div',{class:'stack'},[el('span',{class:'lab',text:'Klas'}), rijS]));
+      v.appendChild(kaartKeuze);
+      if(!data.spoor || !data.periode) return;
+    }
 
     var eigenSets = Object.keys(data.sets).filter(function(k){ return !data.sets[k].voorbeeld; }).length;
     if(eigenSets && dagenSinds(data.backupISO) >= 7){
@@ -317,7 +347,7 @@
         blok.appendChild(el('div',{class:'item'},[
           el('div',{},[
             el('strong',{text:vak}),
-            el('div',{class:'sub',text: s ? (s.vorm === 'flashcards' ? s.kaarten.length + ' flashcards' : 'ophaalbriefje') : 'nog geen set'})
+            el('div',{class:'sub',text: s ? omschrijf(s) : 'nog geen set'})
           ]),
           el('button',{class:'btn small' + (s ? '' : ' primary'),onclick:function(){ bewerkSet(x.stof, vak); },text: s ? 'Bekijk' : 'Maken'})
         ]));
@@ -362,11 +392,12 @@
     var v = document.getElementById('view-week');
     v.textContent = '';
     var goed = 0, half = 0, fout = 0, i = 0;
-    var vragen = s.vorm === 'flashcards' ? s.kaarten.slice() : [{v:s.opdracht, a:'Nakijken met: ' + (s.nakijken || 'je boek')}];
+    var vragen = s.vorm === 'flashcards' ? s.kaarten.slice()
+      : [{v: manierNaam(s.manier) + (s.par ? ' · ' + s.par : '') + '\n' + (s.opdracht || ''), a:'Nakijken met: ' + (s.nakijken || 'je boek')}];
     for(var j = vragen.length - 1; j > 0; j--){ var r = Math.floor(Math.random() * (j + 1)); var tmp = vragen[j]; vragen[j] = vragen[r]; vragen[r] = tmp; }
 
     var kop = el('div',{class:'between'},[
-      el('div',{},[el('span',{class:'chip ophalen',text: keer + 'e keer'}), el('h2',{text:' ' + vak + ' · week ' + wk})]),
+      el('div',{},[el('span',{class:'chip ophalen',text: keer + 'e keer'}), el('h2',{text:' ' + vak + ' · week ' + wk + (s.par ? ' · ' + s.par : '')})]),
       el('button',{class:'btn small',onclick:function(){ toonWeek(); },text:'Stoppen'})
     ]);
     var kaart = el('div',{class:'qcard'});
@@ -428,6 +459,11 @@
       ]);
       body.appendChild(keuze);
 
+      body.appendChild(el('label',{class:'stack'},[
+        el('span',{class:'lab',text:'Paragraaf of onderwerp'}),
+        el('input',{type:'text',value:s.par||'',placeholder:'Bijv. 2.1 of Hoofdstuk 2',oninput:function(e){ s.par = e.target.value; }})
+      ]));
+
       if(s.vorm === 'flashcards'){
         s.kaarten = s.kaarten || [];
         s.kaarten.forEach(function(k, idx){
@@ -439,13 +475,21 @@
         body.appendChild(el('button',{class:'btn ghost',onclick:function(){ s.kaarten.push({v:'',a:''}); teken(); },text:'+ Flashcard'}));
         body.appendChild(el('p',{class:'sub',text:'Vraagstarters: Wat is …? · Waarom …? · Wat is het verschil tussen … en …? · Hoe werkt …? · Bereken …'}));
       } else {
+        var manierRij = el('div',{class:'row'});
+        MANIEREN.forEach(function(m){
+          manierRij.appendChild(el('button',{class:'btn small' + (s.manier === m.id ? ' primary' : ''),
+            onclick:function(){ s.manier = m.id; teken(); },text:m.naam}));
+        });
+        body.appendChild(el('div',{class:'stack'},[el('span',{class:'lab',text:'Manier'}), manierRij]));
+
+        var gekozen = MANIEREN.filter(function(m){ return m.id === s.manier; })[0];
         body.appendChild(el('label',{class:'stack'},[
           el('span',{class:'lab',text:'Opdracht'}),
-          el('textarea',{placeholder:'Bijv. Maak § 1.4 opg. 23 en 27 door elkaar · Braindump § 2.1 · Teken de koolstofkringloop uit je hoofd',oninput:function(e){ s.opdracht = e.target.value; },text:s.opdracht||''})
+          el('textarea',{placeholder: gekozen ? gekozen.hint : 'Kies eerst een manier hierboven.',oninput:function(e){ s.opdracht = e.target.value; },text:s.opdracht||''})
         ]));
         body.appendChild(el('label',{class:'stack'},[
           el('span',{class:'lab',text:'Nakijken met'}),
-          el('input',{type:'text',value:s.nakijken||'',placeholder:'Bijv. antwoorden achterin · § 2.1',oninput:function(e){ s.nakijken = e.target.value; }})
+          el('input',{type:'text',value:s.nakijken||'',placeholder:'Bijv. antwoorden achterin, of de afbeelding in je boek',oninput:function(e){ s.nakijken = e.target.value; }})
         ]));
       }
 
@@ -483,7 +527,7 @@
         lijst.appendChild(el('div',{class:'item'},[
           el('div',{},[
             el('strong',{text:vak}),
-            el('div',{class:'sub',text: s ? (s.vorm === 'flashcards' ? s.kaarten.length + ' flashcards' : 'ophaalbriefje: ' + (s.opdracht||'').slice(0,40)) : 'nog geen set'})
+            el('div',{class:'sub',text: s ? omschrijf(s) : 'nog geen set'})
           ]),
           el('button',{class:'btn small',onclick:function(){ bewerkSet(wk, vak); },text: s ? 'Bewerken' : 'Maken'})
         ]));
@@ -524,6 +568,25 @@
   function toonMeer(){
     var v = document.getElementById('view-meer');
     v.textContent = '';
+
+    var perRij = el('div',{class:'row'});
+    ['1','2','3'].forEach(function(p){
+      perRij.appendChild(el('button',{class:'btn small' + (String(PERIODE) === p ? ' primary' : ''),onclick:function(){
+        data.periode = p; zetSchema(p, SPOOR); bewaar(); vulWeken(); tekenAlles(); kies('tab-meer');
+      },text:'Periode ' + p}));
+    });
+    var spoorRij = el('div',{class:'row'});
+    ['tw','se'].forEach(function(id){
+      spoorRij.appendChild(el('button',{class:'btn small' + (SPOOR === id ? ' primary' : ''),onclick:function(){
+        data.spoor = id; zetSchema(String(PERIODE), id); bewaar(); vulWeken(); tekenAlles(); kies('tab-meer');
+      },text: SCHEMAS[String(PERIODE)][id].naam}));
+    });
+    v.appendChild(el('div',{class:'card'},[
+      el('h2',{text:'Mijn periode en klas'}),
+      el('p',{class:'sub',text: huidigSchema().toets + ': ' + huidigSchema().periode}),
+      el('span',{class:'lab',text:'Periode'}), perRij,
+      el('span',{class:'lab',text:'Klas'}), spoorRij
+    ]));
 
     var vakInput = el('input',{type:'text',value:data.vakken.join(', '),id:'vakken'});
     v.appendChild(el('div',{class:'card'},[
@@ -598,6 +661,16 @@
     ]));
 
     v.appendChild(el('div',{class:'card'},[
+      el('h2',{text:'Opnieuw beginnen'}),
+      el('p',{class:'sub',text:'Wist alles wat in deze browser staat: je sets, je bolletjes en je vakken. Dit kan niet ongedaan worden gemaakt, dus sla eerst een back-up op als je die wilt bewaren.'}),
+      el('button',{class:'btn',onclick:function(){
+        if(!confirm('Alles wissen en opnieuw beginnen? Je sets en bolletjes zijn dan weg.')) return;
+        try{ localStorage.removeItem(KEY); localStorage.removeItem(KEY + '-tab'); }catch(e){}
+        data = leeg(); zetSchema('1','tw'); huidige = weekNu(); bewaar(); vulWeken(); tekenAlles(); kies('tab-week');
+      },text:'Alles wissen'})
+    ]));
+
+    v.appendChild(el('div',{class:'card'},[
       el('h2',{text:'Hoe het werkt'}),
       el('p',{class:'sub',text:'Dit is de digitale versie van blz. 3 van je periodeplanner. Je maakt in de week van de les een ophaalset per vak. Die set komt drie keer terug: 1 week later, ± 1 maand later en in de aftelweken. Na elke keer kleurt een bolletje: rood, oranje of groen.'}),
       el('p',{class:'sub',text:'Werk per vak: doe eerst één vak ± 10–15 minuten en mix daarbinnen paragrafen door elkaar. Daarna pas het volgende vak.'})
@@ -626,14 +699,21 @@
 
   /* ---------- weekkiezer ---------- */
   var sel = document.getElementById('week');
-  WEKEN.forEach(function(w){
-    sel.appendChild(el('option',{value:w.wk,selected: w.wk === huidige ? 'selected' : null,text:'wk ' + w.wk}));
-  });
+  function vulWeken(){
+    sel.textContent = '';
+    if(WEKEN.filter(function(w){ return w.wk === huidige; }).length === 0) huidige = WEKEN[0].wk;
+    WEKEN.forEach(function(w){
+      sel.appendChild(el('option',{value:w.wk,selected: w.wk === huidige ? 'selected' : null,text:'wk ' + w.wk}));
+    });
+    var kop = document.getElementById('spoorkop');
+    if(kop) kop.textContent = 'Periodeplanner · periode ' + PERIODE + (data.spoor ? ' · ' + huidigSchema().toets : '');
+  }
   sel.addEventListener('change', function(e){
     huidige = Number(e.target.value); data.week = huidige; bewaar(); tekenAlles();
   });
 
   function tekenAlles(){ toonWeek(); toonSets(); toonKaart(); toonMeer(); }
+  vulWeken();
   tekenAlles();
   var bewaardeTab = null;
   try{ bewaardeTab = localStorage.getItem(KEY + '-tab'); }catch(e){}
