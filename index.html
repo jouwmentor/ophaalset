@@ -98,6 +98,10 @@
   @media (max-width:520px){.cardrow{grid-template-columns:1fr auto}}
   .foot{color:var(--muted);font-size:.78rem;text-align:center;padding-top:22px}
   .example{font-size:.72rem;color:var(--orange);font-weight:600;font-family:var(--display);text-transform:uppercase;letter-spacing:.08em}
+  .weekkop{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--muted);border-radius:12px;padding:13px 15px;display:flex;flex-direction:column;gap:7px}
+  .weekkop.nu{border-left-color:var(--orange);background:var(--onSoft)}
+  .weekkop h2{font-size:1.15rem}
+  .weekkop .dag{font-size:.82rem;color:var(--muted);text-transform:lowercase}
 </style>
 
 </head>
@@ -207,15 +211,24 @@
   function setVan(wk, vak){ return data.sets[sleutel(wk, vak)]; }
   function scoreVan(wk, vak, keer){ return data.scores[sleutel(wk, vak) + '|' + keer] || ''; }
   function zetScore(wk, vak, keer, s){ data.scores[sleutel(wk, vak) + '|' + keer] = s; bewaar(); }
-  function weekNu(){
+  function isoWeek(){
     var d = new Date(), t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
     var jan1 = new Date(Date.UTC(t.getUTCFullYear(),0,1));
-    var w = Math.ceil(((t - jan1) / 86400000 + 1) / 7);
-    // valt de huidige ISO-week in dit rooster? anders de eerste week van de periode
-    for (var i = 0; i < WEKEN.length; i++) if (WEKEN[i].wk === w) return w;
-    return WEKEN.length ? WEKEN[0].wk : w;
+    return Math.ceil(((t - jan1) / 86400000 + 1) / 7);
   }
+  // het weeknummer van vandaag, maar alleen als die week in dit rooster staat
+  function weekVandaag(){
+    var w = isoWeek();
+    for(var i = 0; i < WEKEN.length; i++) if(WEKEN[i].wk === w) return w;
+    return null;
+  }
+  function weekNu(){ var w = weekVandaag(); return w !== null ? w : (WEKEN.length ? WEKEN[0].wk : isoWeek()); }
+  function datumVandaag(){
+    try{ return new Date().toLocaleDateString('nl-NL', {weekday:'long', day:'numeric', month:'long'}); }
+    catch(e){ return ''; }
+  }
+  function weekInfo(wk){ return WEKEN.filter(function(w){ return w.wk === wk; })[0] || {}; }
   function dotsEl(wk, vak){
     var d = el('span',{class:'dots'});
     for(var i=1;i<=3;i++) d.appendChild(el('span',{class:'dot ' + scoreVan(wk,vak,i),title:i + 'e keer'}));
@@ -253,7 +266,44 @@
 
   /* ---------- weergave: deze week ---------- */
   zetSchema(String(data.periode || '1'), data.spoor || 'tw');
-  var huidige = data.week || weekNu();
+  var huidige = weekVandaag() !== null ? weekVandaag() : (data.week || weekNu());
+
+  // grote kop: welke week kijk je naar, en is dat de week van vandaag?
+  function weekKop(){
+    var info = weekInfo(huidige);
+    var nu = weekVandaag();
+    var isNu = nu !== null && nu === huidige;
+    var eerste = WEKEN[0] || {}, laatste = WEKEN[WEKEN.length - 1] || {};
+    var titel = 'Week ' + huidige + (info.dates ? '  ·  ' + info.dates : '');
+    var doel = nu !== null ? nu : eerste.wk;
+    var rechts = isNu ? el('span',{class:'dag',text: datumVandaag()})
+      : (doel !== huidige ? el('button',{class:'btn small primary',onclick:function(){ gaNaarWeek(doel); },
+          text: nu !== null ? 'Naar deze week' : 'Naar de eerste week'}) : null);
+    var kop = el('div',{class:'weekkop' + (isNu ? ' nu' : '')},[
+      el('div',{class:'between'},[
+        el('div',{},[
+          el('span',{class:'chip ' + (isNu ? 'maken' : 'ophalen'),text: isNu ? 'Deze week' : nu === null ? 'Buiten de periode' : 'Andere week'}),
+          el('h2',{text:' ' + titel})
+        ]),
+        rechts
+      ])
+    ]);
+    if(nu === null){
+      kop.appendChild(el('p',{class:'sub',text:'Vandaag (' + datumVandaag() + ') valt buiten deze periode. Dit rooster loopt van week ' + eerste.wk
+        + (eerste.dates ? ' (' + eerste.dates + ')' : '') + ' tot week ' + laatste.wk + (laatste.dates ? ' (' + laatste.dates + ')' : '')
+        + '. Zit je in een andere periode? Wissel bij Meer.'}));
+    } else if(!isNu){
+      kop.appendChild(el('p',{class:'sub',text:'Je kijkt vooruit of terug. Deze week is week ' + nu + (weekInfo(nu).dates ? ' (' + weekInfo(nu).dates + ')' : '') + '.'}));
+    }
+    return kop;
+  }
+
+  function gaNaarWeek(wk){
+    huidige = wk; data.week = wk; bewaar();
+    var s2 = document.getElementById('week');
+    if(s2) s2.value = String(wk);
+    tekenAlles(); kies('tab-week');
+  }
 
   function toonWeek(){
     var v = document.getElementById('view-week');
@@ -278,13 +328,15 @@
         rijS.appendChild(el('button',{class:'btn small' + (data.spoor === id ? ' primary' : ''),onclick:function(){
           data.spoor = id;
           if(!data.periode) data.periode = '1';
-          zetSchema(String(data.periode), id); bewaar(); vulWeken(); tekenAlles();
+          zetSchema(String(data.periode), id); huidige = weekNu(); bewaar(); vulWeken(); tekenAlles();
         },text: sch.naam + ' · ' + sch.toets}));
       });
       kaartKeuze.appendChild(el('div',{class:'stack'},[el('span',{class:'lab',text:'Klas'}), rijS]));
       v.appendChild(kaartKeuze);
       if(!data.spoor || !data.periode) return;
     }
+
+    v.appendChild(weekKop());
 
     var eigenSets = Object.keys(data.sets).filter(function(k){ return !data.sets[k].voorbeeld; }).length;
     if(eigenSets && dagenSinds(data.backupISO) >= 7){
@@ -513,8 +565,10 @@
     var v = document.getElementById('view-sets');
     v.textContent = '';
     var kies = el('select',{id:'setweek',onchange:function(e){ vulLijst(Number(e.target.value)); }});
+    var nu = weekVandaag();
     WEKEN.filter(function(w){ return !w.vakantie; }).forEach(function(w){
-      kies.appendChild(el('option',{value:w.wk,selected: w.wk === huidige ? 'selected' : null,text:'Week ' + w.wk + ' · ' + w.dates}));
+      kies.appendChild(el('option',{value:w.wk,selected: w.wk === huidige ? 'selected' : null,
+        text:'Week ' + w.wk + ' · ' + w.dates + (w.wk === nu ? ' · deze week' : '')}));
     });
     var lijst = el('div',{class:'stack'});
     v.appendChild(el('div',{class:'card'},[
@@ -549,7 +603,7 @@
     var body = el('tbody');
     WEKEN.forEach(function(w){
       if(w.vakantie || w.aftellen) return;
-      var tr = el('tr',{},[el('th',{text:'wk ' + w.wk})]);
+      var tr = el('tr',{},[el('th',{text:'wk ' + w.wk + (w.wk === weekVandaag() ? ' · nu' : '')})]);
       data.vakken.forEach(function(vak){
         var td = el('td');
         if(setVan(w.wk, vak)) td.appendChild(dotsEl(w.wk, vak));
@@ -574,13 +628,13 @@
     var perRij = el('div',{class:'row'});
     ['1','2','3'].forEach(function(p){
       perRij.appendChild(el('button',{class:'btn small' + (String(PERIODE) === p ? ' primary' : ''),onclick:function(){
-        data.periode = p; zetSchema(p, SPOOR); bewaar(); vulWeken(); tekenAlles(); kies('tab-meer');
+        data.periode = p; zetSchema(p, SPOOR); huidige = weekNu(); bewaar(); vulWeken(); tekenAlles(); kies('tab-meer');
       },text:'Periode ' + p}));
     });
     var spoorRij = el('div',{class:'row'});
     ['tw','se'].forEach(function(id){
       spoorRij.appendChild(el('button',{class:'btn small' + (SPOOR === id ? ' primary' : ''),onclick:function(){
-        data.spoor = id; zetSchema(String(PERIODE), id); bewaar(); vulWeken(); tekenAlles(); kies('tab-meer');
+        data.spoor = id; zetSchema(String(PERIODE), id); huidige = weekNu(); bewaar(); vulWeken(); tekenAlles(); kies('tab-meer');
       },text: SCHEMAS[String(PERIODE)][id].naam}));
     });
     v.appendChild(el('div',{class:'card'},[
@@ -703,9 +757,11 @@
   var sel = document.getElementById('week');
   function vulWeken(){
     sel.textContent = '';
-    if(WEKEN.filter(function(w){ return w.wk === huidige; }).length === 0) huidige = WEKEN[0].wk;
+    if(WEKEN.filter(function(w){ return w.wk === huidige; }).length === 0) huidige = weekNu();
+    var nu = weekVandaag();
     WEKEN.forEach(function(w){
-      sel.appendChild(el('option',{value:w.wk,selected: w.wk === huidige ? 'selected' : null,text:'wk ' + w.wk}));
+      sel.appendChild(el('option',{value:w.wk,selected: w.wk === huidige ? 'selected' : null,
+        text:'wk ' + w.wk + (w.wk === nu ? ' · nu' : '')}));
     });
     var kop = document.getElementById('spoorkop');
     if(kop) kop.textContent = 'Periodeplanner · periode ' + PERIODE + (data.spoor ? ' · ' + huidigSchema().toets : '');
